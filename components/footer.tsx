@@ -1,17 +1,17 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Instagram, Facebook, Twitter } from "lucide-react"
-
+import Logo from "@/public/logo.png"
 export default function Footer() {
   return (
     <footer className="bg-black text-white">
       <div className="container px-4 py-16 md:px-6 md:py-20">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-12 md:grid-cols-3">
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
               <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white/20">
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6433.JPG-3CK0BdvVr3sRzMpjAwKR4YkDa6aoG8.jpeg"
+                  src={Logo}
                   alt="Modest Threads Logo"
                   fill
                   className="object-cover"
@@ -47,17 +47,17 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#collection" className="text-white/70 hover:text-white transition-colors">
+                <Link href="/collection" className="text-white/70 hover:text-white transition-colors">
                   Collection
                 </Link>
               </li>
               <li>
-                <Link href="#about" className="text-white/70 hover:text-white transition-colors">
+                <Link href="/about" className="text-white/70 hover:text-white transition-colors">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="#contact" className="text-white/70 hover:text-white transition-colors">
+                <Link href="/contact" className="text-white/70 hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
@@ -71,21 +71,6 @@ export default function Footer() {
               <li className="text-white/70">Email: info@modestthreads.com</li>
               <li className="text-white/70">Instagram: @reselling_abaya_esra</li>
             </ul>
-          </div>
-
-          <div className="space-y-6">
-            <h3 className="text-sm uppercase tracking-wider font-medium">Newsletter</h3>
-            <p className="text-white/70">Subscribe to receive updates on new collections and exclusive offers.</p>
-            <form className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="bg-white/10 border border-white/20 px-4 py-2 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
-              />
-              <button type="submit" className="bg-white text-black px-4 py-2 hover:bg-white/90 transition-colors">
-                Subscribe
-              </button>
-            </form>
           </div>
         </div>
 

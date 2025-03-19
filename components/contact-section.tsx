@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Instagram, Mail, Phone } from "lucide-react"
+import { sendContactEmail } from "@/app/actions/contact-actions"
 
 export default function ContactSection() {
   const [formState, setFormState] = useState({
@@ -20,6 +21,7 @@ export default function ContactSection() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState("")
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -33,51 +35,35 @@ export default function ContactSection() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError("")
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Call the server action to send email via SendGrid
+      const result = await sendContactEmail(formState)
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setFormState({
-      name: "",
-      email: "",
-      phone: "",
-      inquiry: "general",
-      message: "",
-    })
-
-    // Reset success message after 5 seconds
-    setTimeout(() => {
-      setIsSubmitted(false)
-    }, 5000)
+      if (result.success) {
+        setIsSubmitted(true)
+        setFormState({
+          name: "",
+          email: "",
+          phone: "",
+          inquiry: "general",
+          message: "",
+        })
+      } else {
+        setError(result.message || "Failed to send message. Please try again.")
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again later.")
+      console.error("Contact form error:", err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="container px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-serif mb-6 tracking-tight"
-          >
-            Get In Touch
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            viewport={{ once: true }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-          >
-            Interested in our collection? Have questions about sizing, fabric, or customization? We're here to help you
-            find the perfect piece.
-          </motion.p>
-        </div>
-
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -88,7 +74,7 @@ export default function ContactSection() {
           >
             <div className="space-y-4">
               <h3 className="text-xl font-serif">Contact Information</h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-olive-100">
                     <Phone className="h-5 w-5 text-olive-800" />
@@ -119,23 +105,26 @@ export default function ContactSection() {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-serif">Business Hours</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span>9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday</span>
-                  <span>10:00 AM - 4:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span>Closed</span>
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground">All times are in EST (Eastern Standard Time)</p>
+            <div className="bg-olive-50 p-6">
+              <h3 className="text-xl font-serif mb-4">How We Can Help</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <span className="text-olive-800 font-medium">•</span>
+                  <span>Information about our collection and pricing</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-olive-800 font-medium">•</span>
+                  <span>Custom order inquiries and consultations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-olive-800 font-medium">•</span>
+                  <span>Sizing and fabric information</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-olive-800 font-medium">•</span>
+                  <span>Shipping and delivery questions</span>
+                </li>
+              </ul>
             </div>
           </motion.div>
 
@@ -153,6 +142,12 @@ export default function ContactSection() {
                 </div>
               ) : (
                 <>
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 p-4 text-center mb-4">
+                      <p>{error}</p>
+                    </div>
+                  )}
+
                   <div className="grid gap-2">
                     <Label htmlFor="name">Name</Label>
                     <Input

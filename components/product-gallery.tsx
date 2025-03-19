@@ -6,14 +6,20 @@ import { motion } from "framer-motion"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
-
+import Elegant from "@/public/elegance.png"
+import BlackPearl from "@/public/black-pearl.png"
+import SageGreen from "@/public/sage-green.png"
+import LuxuryBlack from "@/public/luxury-black.png"
+import DustyRose from "@/public/dusty-rose.png"
+import Signature from "@/public/signature.png"
+import Link from "next/link"
 const products = [
   {
     id: "1",
     name: "Blush Pink Embellished Abaya",
     description:
       "A delicate blush pink abaya with intricate embroidery and beadwork on the sleeves and cuffs. Perfect for special occasions.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6438.JPG-qUJDAPNydBSNzZBaopSenrUnw0864C.jpeg",
+    image: Elegant,
     category: "Special Occasion",
   },
   {
@@ -21,7 +27,7 @@ const products = [
     name: "Classic Black Pearl Abaya",
     description:
       "Timeless black abaya adorned with elegant pearl and crystal embellishments on the sleeves. A perfect blend of tradition and luxury.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6434.JPG-gMa5CcoJ4J7I5FtDa5hxveOyUKQgbA.jpeg",
+    image: BlackPearl,
     category: "Luxury Collection",
   },
   {
@@ -29,7 +35,7 @@ const products = [
     name: "Sage Green Embroidered Abaya",
     description:
       "A serene sage green abaya featuring delicate floral embroidery along the sleeves. Perfect for both everyday wear and special occasions.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6435.JPG-CsMvRiK70j8X8jdpBSxU14avneRxJT.jpeg",
+    image: SageGreen,
     category: "Everyday Elegance",
   },
   {
@@ -37,7 +43,7 @@ const products = [
     name: "Luxury Black Floral Abaya",
     description:
       "An exquisite black abaya with detailed floral embroidery throughout. Perfect for making a statement at special events.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6436.JPG-8ZsGWg45COOp3NVH9CzCw5wYH4gibI.jpeg",
+    image: LuxuryBlack,
     category: "Luxury Collection",
   },
   {
@@ -45,7 +51,7 @@ const products = [
     name: "Dusty Rose Beaded Abaya",
     description:
       "A stunning dusty rose abaya with intricate beadwork and embroidery. The perfect blend of tradition and contemporary design.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6437.JPG-V2FQd1AGJdxam1FzUpYwz4FPXcGyWW.jpeg",
+    image: DustyRose,
     category: "Special Occasion",
   },
   {
@@ -53,7 +59,7 @@ const products = [
     name: "Esra Signature Abaya",
     description:
       "Our signature design featuring premium fabric and exquisite craftsmanship. A timeless piece for your collection.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6440.JPG-azzRZ2T3EoIkpjwBOCjXUTjNcAYJWU.jpeg",
+    image: Signature,
     category: "Signature Collection",
   },
 ]
@@ -94,16 +100,6 @@ export default function ProductGallery() {
 
       <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 z-10 bg-white/80 hover:bg-white rounded-full"
-            onClick={() => setSelectedProduct(null)}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </Button>
-
           {selectedProduct && (
             <div className="grid md:grid-cols-2">
               <div className="relative aspect-[3/4] bg-muted">
@@ -127,8 +123,10 @@ export default function ProductGallery() {
                     For pricing information and to place an order, please contact us directly.
                   </p>
                   <div className="flex flex-col gap-2">
-                    <Button className="w-full rounded-none transition-all duration-300 ease-in-out">
-                      Contact for Details
+                    <Button asChild className="w-full rounded-none transition-all duration-300 ease-in-out">
+                      <Link href="/contact" onClick={() => setSelectedProduct(null)}>
+                        Contact for Details
+                      </Link>
                     </Button>
                     <Button
                       variant="outline"

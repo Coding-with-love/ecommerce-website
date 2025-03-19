@@ -6,25 +6,27 @@ import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-
+import Elegant from "@/public/elegance.png"
+import BlackPearl from "@/public/black-pearl.png"
+import SageGreen from "@/public/sage-green.png"
 const featuredItems = [
   {
     id: "1",
     name: "The Esra Collection",
     description: "Our signature collection featuring premium fabrics and exquisite embellishments.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6440.JPG-azzRZ2T3EoIkpjwBOCjXUTjNcAYJWU.jpeg",
+    image: Elegant,
   },
   {
     id: "2",
     name: "Luxury Pearl Series",
     description: "Elegant abayas adorned with pearls and crystals for a touch of luxury.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6434.JPG-gMa5CcoJ4J7I5FtDa5hxveOyUKQgbA.jpeg",
+    image: BlackPearl,
   },
   {
     id: "3",
     name: "Embroidered Elegance",
     description: "Featuring intricate hand embroidery that showcases traditional craftsmanship.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6435.JPG-CsMvRiK70j8X8jdpBSxU14avneRxJT.jpeg",
+    image: SageGreen,
   },
 ]
 
@@ -69,7 +71,7 @@ export default function FeaturedCollection() {
             variant="outline"
             className="rounded-none border-black text-black hover:bg-black hover:text-white group transition-all duration-300 ease-in-out"
           >
-            <Link href="#collection">
+            <Link href="/collection">
               View All Collections
               <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
@@ -98,4 +100,3 @@ export default function FeaturedCollection() {
     </div>
   )
 }
-
