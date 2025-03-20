@@ -5,7 +5,7 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+import { Currency, X } from "lucide-react"
 import Elegant from "@/public/elegance.png"
 import BlackPearl from "@/public/black-pearl.png"
 import SageGreen from "@/public/sage-green.png"
@@ -13,6 +13,10 @@ import LuxuryBlack from "@/public/luxury-black.png"
 import DustyRose from "@/public/dusty-rose.png"
 import Signature from "@/public/signature.png"
 import Link from "next/link"
+import { useCart } from "@/context/cart-context"
+import type { Product } from "@/lib/types"
+import { formatCurrency } from "@/lib/utils"
+import { ShoppingCart } from "lucide-react"
 const products = [
   {
     id: "1",
@@ -21,6 +25,8 @@ const products = [
       "A delicate blush pink abaya with intricate embroidery and beadwork on the sleeves and cuffs. Perfect for special occasions.",
     image: Elegant,
     category: "Special Occasion",
+    price: .50,
+    currency: "USD",
   },
   {
     id: "2",
@@ -29,6 +35,8 @@ const products = [
       "Timeless black abaya adorned with elegant pearl and crystal embellishments on the sleeves. A perfect blend of tradition and luxury.",
     image: BlackPearl,
     category: "Luxury Collection",
+    price: 299.99,
+    currency: "USD",
   },
   {
     id: "3",
@@ -37,6 +45,8 @@ const products = [
       "A serene sage green abaya featuring delicate floral embroidery along the sleeves. Perfect for both everyday wear and special occasions.",
     image: SageGreen,
     category: "Everyday Elegance",
+    price: 199.99,
+    currency: "USD",
   },
   {
     id: "4",
@@ -45,6 +55,8 @@ const products = [
       "An exquisite black abaya with detailed floral embroidery throughout. Perfect for making a statement at special events.",
     image: LuxuryBlack,
     category: "Luxury Collection",
+    price: 279.99,
+    currency: "USD",
   },
   {
     id: "5",
@@ -53,6 +65,8 @@ const products = [
       "A stunning dusty rose abaya with intricate beadwork and embroidery. The perfect blend of tradition and contemporary design.",
     image: DustyRose,
     category: "Special Occasion",
+    price: 259.99,
+    currency: "USD",
   },
   {
     id: "6",
@@ -61,11 +75,14 @@ const products = [
       "Our signature design featuring premium fabric and exquisite craftsmanship. A timeless piece for your collection.",
     image: Signature,
     category: "Signature Collection",
+    price: 259.99,
+    currency: "USD",
   },
 ]
 
 export default function ProductGallery() {
-  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const { addToCart } = useCart()
 
   return (
     <>
@@ -91,7 +108,10 @@ export default function ProductGallery() {
             </div>
             <div className="space-y-2">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">{product.category}</div>
-              <h3 className="font-serif text-xl group-hover:text-primary transition-colors">{product.name}</h3>
+              <div className="flex justify-between items-center">
+                <h3 className="font-serif text-xl group-hover:text-primary transition-colors">{product.name}</h3>
+                <span className="font-medium text-lg">{formatCurrency(product.price, product.currency)}</span>
+              </div>
               <p className="text-muted-foreground line-clamp-2">{product.description}</p>
             </div>
           </motion.div>
@@ -100,6 +120,16 @@ export default function ProductGallery() {
 
       <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4 z-10 bg-white/80 hover:bg-white rounded-full"
+            onClick={() => setSelectedProduct(null)}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </Button>
+
           {selectedProduct && (
             <div className="grid md:grid-cols-2">
               <div className="relative aspect-[3/4] bg-muted">
@@ -115,15 +145,34 @@ export default function ProductGallery() {
                 <div className="text-sm uppercase tracking-wider text-muted-foreground mb-2">
                   {selectedProduct.category}
                 </div>
-                <h2 className="font-serif text-3xl mb-4">{selectedProduct.name}</h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="font-serif text-3xl">{selectedProduct.name}</h2>
+                  <span className="font-medium text-2xl">
+                    {formatCurrency(selectedProduct.price, selectedProduct.currency)}
+                  </span>
+                </div>
                 <p className="text-muted-foreground mb-8">{selectedProduct.description}</p>
 
                 <div className="mt-auto space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    For pricing information and to place an order, please contact us directly.
+                    Purchase directly or contact us for more information and custom requests.
                   </p>
                   <div className="flex flex-col gap-2">
-                    <Button asChild className="w-full rounded-none transition-all duration-300 ease-in-out">
+                    <Button
+                      className="w-full rounded-none transition-all duration-300 ease-in-out flex items-center justify-center gap-2"
+                      onClick={() => {
+                        addToCart(selectedProduct)
+                        setSelectedProduct(null)
+                      }}
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Add to Cart
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full rounded-none transition-all duration-300 ease-in-out"
+                    >
                       <Link href="/contact" onClick={() => setSelectedProduct(null)}>
                         Contact for Details
                       </Link>

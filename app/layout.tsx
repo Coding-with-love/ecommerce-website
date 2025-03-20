@@ -5,6 +5,7 @@ import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
+import { CartProvider } from "@/context/cart-context"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -19,7 +20,6 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "Modest Threads | Elegant Abayas & Modest Fashion",
   description: "Discover our exquisite collection of handcrafted abayas and modest fashion pieces.",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -31,17 +31,16 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className={`${playfair.variable} ${montserrat.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="light">
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <CartProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>
   )
 }
 
-
-
-import './globals.css'

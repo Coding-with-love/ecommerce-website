@@ -3,14 +3,20 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
+import { CartButton } from "@/components/cart-button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { supabase } from "@/lib/supabase"
+import { isAdmin } from "@/lib/admin"
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [user, setUser] = useState(null)
+  const [isAdminUser, setIsAdminUser] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -22,8 +28,47 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  useEffect(() => {
+    async function getUser() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      setUser(session?.user || null)
+
+      // Check if user is admin
+      if (session?.user) {
+        const adminCheck = await isAdmin()
+        setIsAdminUser(adminCheck)
+      }
+
+      // Set up listener for auth changes
+      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+        setUser(session?.user || null)
+
+        // Check admin status when auth state changes
+        if (session?.user) {
+          const adminCheck = await isAdmin()
+          setIsAdminUser(adminCheck)
+        } else {
+          setIsAdminUser(false)
+        }
+      })
+
+      return () => {
+        authListener?.subscription.unsubscribe()
+      }
+    }
+
+    getUser()
+  }, [])
+
   // Determine if we're on the homepage
   const isHomePage = pathname === "/"
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    window.location.href = "/"
+  }
 
   return (
     <header
@@ -95,7 +140,44 @@ export default function Header() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <CartButton />
+
+          {/* Account dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn("transition-colors duration-300", scrolled || !isHomePage ? "text-black" : "text-white")}
+              >
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {user ? (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/account">My Account</Link>
+                  </DropdownMenuItem>
+                  {isAdminUser && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">Admin Dashboard</Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/account/login">Sign In</Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             asChild
             variant={scrolled || !isHomePage ? "default" : "outline"}
@@ -181,6 +263,15 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/account"
+                  className={cn("text-2xl font-serif", pathname === "/account" && "text-primary")}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Account
                 </Link>
               </li>
             </ul>
