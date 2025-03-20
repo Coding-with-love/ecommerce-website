@@ -11,7 +11,7 @@ import { CartButton } from "@/components/cart-button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { supabase } from "@/lib/supabase"
 import { isAdmin } from "@/lib/admin"
-
+import Logo from "@/public/logo.png"
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -81,7 +81,7 @@ export default function Header() {
         <Link href="/" className="flex items-center space-x-2 z-10">
           <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white/80">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6433.JPG-3CK0BdvVr3sRzMpjAwKR4YkDa6aoG8.jpeg"
+              src={Logo}
               alt="Modest Threads Logo"
               fill
               className="object-cover"
@@ -214,7 +214,7 @@ export default function Header() {
             <Link href="/" className="flex items-center space-x-2">
               <div className="relative h-10 w-10 overflow-hidden rounded-full">
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6433.JPG-3CK0BdvVr3sRzMpjAwKR4YkDa6aoG8.jpeg"
+                  src={Logo}
                   alt="Modest Threads Logo"
                   fill
                   className="object-cover"

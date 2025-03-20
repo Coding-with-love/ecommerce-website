@@ -25,7 +25,7 @@ const products = [
       "A delicate blush pink abaya with intricate embroidery and beadwork on the sleeves and cuffs. Perfect for special occasions.",
     image: Elegant,
     category: "Special Occasion",
-    price: .50,
+    price: 249.99,
     currency: "USD",
   },
   {
