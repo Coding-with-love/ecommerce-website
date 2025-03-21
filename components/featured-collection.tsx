@@ -1,37 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import Elegant from "@/public/elegance.png"
-import BlackPearl from "@/public/black-pearl.png"
-import SageGreen from "@/public/sage-green.png"
-const featuredItems = [
-  {
-    id: "1",
-    name: "The Esra Collection",
-    description: "Our signature collection featuring premium fabrics and exquisite embellishments.",
-    image: Elegant,
-  },
-  {
-    id: "2",
-    name: "Luxury Pearl Series",
-    description: "Elegant abayas adorned with pearls and crystals for a touch of luxury.",
-    image: BlackPearl,
-  },
-  {
-    id: "3",
-    name: "Embroidered Elegance",
-    description: "Featuring intricate hand embroidery that showcases traditional craftsmanship.",
-    image: SageGreen,
-  },
-]
+import type { Product } from "@/lib/types"
 
-export default function FeaturedCollection() {
+export default function FeaturedCollection({ initialProducts = [] }: { initialProducts?: Product[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [featuredItems, setFeaturedItems] = useState<Product[]>(initialProducts)
+
+  // If no products are provided, use the first 3 from the initialProducts
+  useEffect(() => {
+    if (initialProducts.length > 0 && featuredItems.length === 0) {
+      setFeaturedItems(initialProducts.slice(0, 3))
+    }
+  }, [initialProducts, featuredItems.length])
+
+  // If there are no featured items, show a fallback
+  if (featuredItems.length === 0) {
+    return null
+  }
 
   return (
     <div className="container px-4 md:px-6">
@@ -87,8 +78,8 @@ export default function FeaturedCollection() {
         >
           <div className="aspect-[4/5] relative overflow-hidden">
             <Image
-              src={featuredItems[activeIndex].image || "/placeholder.svg"}
-              alt={featuredItems[activeIndex].name}
+              src={featuredItems[activeIndex]?.image || "/placeholder.svg"}
+              alt={featuredItems[activeIndex]?.name}
               fill
               className="object-cover transition-opacity duration-500"
             />
@@ -100,3 +91,4 @@ export default function FeaturedCollection() {
     </div>
   )
 }
+

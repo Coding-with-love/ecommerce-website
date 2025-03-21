@@ -31,6 +31,12 @@ if (!supabaseUrl || !supabaseServiceKey) {
         createUser: () => ({ data: null, error: new Error("Supabase admin client not properly initialized") }),
       },
     },
+    storage: {
+      from: () => ({
+        upload: () => ({ error: new Error("Supabase admin client not properly initialized") }),
+        getPublicUrl: () => ({ data: { publicUrl: "" } }),
+      }),
+    },
   }
 } else {
   // Only create the real client if we have the required variables

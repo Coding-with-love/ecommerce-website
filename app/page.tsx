@@ -4,7 +4,16 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Elegance from "@/public/elegance.png"
 import DustyRose from "@/public/dusty-rose.png"
-export default function Home() {
+import FeaturedCollection from "@/components/featured-collection"
+import { getProducts } from "./actions/product-actions"
+export default async function Home() {
+  // Fetch featured products
+  const response = await getProducts()
+  const products = response.success ? response.data : []
+
+  // Filter for featured products
+  const featuredProducts = products.filter((product) => product.featured).slice(0, 3)
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -12,7 +21,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10" />
           <Image
-            src={Elegance}
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6438.JPG-qUJDAPNydBSNzZBaopSenrUnw0864C.jpeg"
             alt="Elegant abaya"
             fill
             className="object-cover object-center"
@@ -56,6 +65,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Collection Section */}
+      <section className="py-24 md:py-32 bg-white relative overflow-hidden">
+        <FeaturedCollection initialProducts={featuredProducts} />
+      </section>
+
       {/* Craftsmanship Section */}
       <section className="py-24 md:py-32 bg-white relative overflow-hidden">
         <div className="container px-4 md:px-6 relative z-10">
@@ -89,7 +103,7 @@ export default function Home() {
             <div className="order-1 md:order-2 relative">
               <div className="aspect-square relative rounded-none overflow-hidden">
                 <Image
-                  src={DustyRose}
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6437.JPG-V2FQd1AGJdxam1FzUpYwz4FPXcGyWW.jpeg"
                   alt="Detailed abaya embroidery"
                   fill
                   className="object-cover"
@@ -104,6 +118,4 @@ export default function Home() {
     </div>
   )
 }
-
-
 

@@ -2,7 +2,18 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { LayoutDashboard, Package, Users, Settings, Home, Menu, X, ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  LayoutDashboard,
+  Package,
+  Users,
+  Settings,
+  Home,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ShoppingBag,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
@@ -81,6 +92,7 @@ export default function AdminSidebar() {
                   isActive("/admin") &&
                     !isActive("/admin/orders") &&
                     !isActive("/admin/customers") &&
+                    !isActive("/admin/products") &&
                     !isActive("/admin/settings") &&
                     "bg-gray-100 font-medium",
                   isCollapsed && "justify-center px-2",
@@ -103,6 +115,20 @@ export default function AdminSidebar() {
               >
                 <Package size={18} />
                 {!isCollapsed && <span>Orders</span>}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/products"
+                className={cn(
+                  "flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100",
+                  isActive("/admin/products") && "bg-gray-100 font-medium",
+                  isCollapsed && "justify-center px-2",
+                )}
+                onClick={closeMobileMenu}
+              >
+                <ShoppingBag size={18} />
+                {!isCollapsed && <span>Products</span>}
               </Link>
             </li>
             <li>

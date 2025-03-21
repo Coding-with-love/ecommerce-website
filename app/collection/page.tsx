@@ -1,8 +1,11 @@
-"use client"
 import ProductGallery from "@/components/product-gallery"
 import FeaturedCollection from "@/components/featured-collection"
+import { getProducts } from "@/app/actions/product-actions"
 
-export default function CollectionPage() {
+export default async function CollectionPage() {
+  const response = await getProducts()
+  const products = response.success ? response.data : []
+
   return (
     <div className="flex flex-col min-h-screen pt-20">
       {/* Collection Hero */}
@@ -21,7 +24,7 @@ export default function CollectionPage() {
       {/* Collection Gallery */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container px-4 md:px-6">
-          <ProductGallery />
+          <ProductGallery initialProducts={products} />
         </div>
       </section>
 

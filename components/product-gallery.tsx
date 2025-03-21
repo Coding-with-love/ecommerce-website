@@ -17,72 +17,10 @@ import { useCart } from "@/context/cart-context"
 import type { Product } from "@/lib/types"
 import { formatCurrency } from "@/lib/utils"
 import { ShoppingCart } from "lucide-react"
-const products = [
-  {
-    id: "1",
-    name: "Blush Pink Embellished Abaya",
-    description:
-      "A delicate blush pink abaya with intricate embroidery and beadwork on the sleeves and cuffs. Perfect for special occasions.",
-    image: Elegant,
-    category: "Special Occasion",
-    price: 249.99,
-    currency: "USD",
-  },
-  {
-    id: "2",
-    name: "Classic Black Pearl Abaya",
-    description:
-      "Timeless black abaya adorned with elegant pearl and crystal embellishments on the sleeves. A perfect blend of tradition and luxury.",
-    image: BlackPearl,
-    category: "Luxury Collection",
-    price: 299.99,
-    currency: "USD",
-  },
-  {
-    id: "3",
-    name: "Sage Green Embroidered Abaya",
-    description:
-      "A serene sage green abaya featuring delicate floral embroidery along the sleeves. Perfect for both everyday wear and special occasions.",
-    image: SageGreen,
-    category: "Everyday Elegance",
-    price: 199.99,
-    currency: "USD",
-  },
-  {
-    id: "4",
-    name: "Luxury Black Floral Abaya",
-    description:
-      "An exquisite black abaya with detailed floral embroidery throughout. Perfect for making a statement at special events.",
-    image: LuxuryBlack,
-    category: "Luxury Collection",
-    price: 279.99,
-    currency: "USD",
-  },
-  {
-    id: "5",
-    name: "Dusty Rose Beaded Abaya",
-    description:
-      "A stunning dusty rose abaya with intricate beadwork and embroidery. The perfect blend of tradition and contemporary design.",
-    image: DustyRose,
-    category: "Special Occasion",
-    price: 259.99,
-    currency: "USD",
-  },
-  {
-    id: "6",
-    name: "Esra Signature Abaya",
-    description:
-      "Our signature design featuring premium fabric and exquisite craftsmanship. A timeless piece for your collection.",
-    image: Signature,
-    category: "Signature Collection",
-    price: 259.99,
-    currency: "USD",
-  },
-]
-
-export default function ProductGallery() {
+export default function ProductGallery({ initialProducts = [] }: { initialProducts: Product[] }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const { addToCart } = useCart()
+  const [products, setProducts] = useState<Product[]>(initialProducts)
 
   return (
     <>
@@ -194,4 +132,3 @@ export default function ProductGallery() {
     </>
   )
 }
-

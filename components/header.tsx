@@ -141,8 +141,13 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+        <Button
+                variant="ghost"
+                size="icon"
+                className={cn("transition-colors duration-300", scrolled || !isHomePage ? "text-black" : "text-white")}
+              >
           <CartButton />
-
+</Button>
           {/* Account dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
