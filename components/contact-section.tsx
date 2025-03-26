@@ -77,20 +77,11 @@ export default function ContactSection() {
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-olive-100">
-                    <Phone className="h-5 w-5 text-olive-800" />
-                  </div>
-                  <div>
-                    <p className="font-medium">WhatsApp</p>
-                    <p className="text-muted-foreground">+91 7909149376</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-olive-100">
                     <Mail className="h-5 w-5 text-olive-800" />
                   </div>
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-muted-foreground">info@modestthreads.com</p>
+                    <p className="text-muted-foreground">modesthreads.co@gmail.com</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -99,7 +90,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <p className="font-medium">Instagram</p>
-                    <p className="text-muted-foreground">@reselling_abaya_esra</p>
+                    <p className="text-muted-foreground">@modesthreads.co</p>
                   </div>
                 </div>
               </div>
