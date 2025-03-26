@@ -9,12 +9,13 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-3">
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
-              <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white/20">
+              <div className="relative h-12 w-24 overflow-hidden bg-white rounded-md">
                 <Image
                   src={Logo}
                   alt="Modest Threads Logo"
                   fill
-                  className="object-cover"
+                  className="object-fill"
+                  priority
                 />
               </div>
               <span className="font-serif text-xl">Modest Threads</span>

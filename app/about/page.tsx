@@ -39,12 +39,12 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/5] relative rounded-none overflow-hidden">
+              <div className="aspect-[4/5] relative rounded-none overflow-hidden flex items-center justify-center">
                 <Image
                   src={Logo}
                   alt="Modest Threads founder"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-2/3 h-16 bg-olive-200 -z-10"></div>
