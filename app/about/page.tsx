@@ -84,10 +84,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials 
       <section className="py-16 md:py-24 bg-olive-900 text-white">
         <TestimonialSection />
-      </section>
+      </section>*/}
     </div>
   )
 }

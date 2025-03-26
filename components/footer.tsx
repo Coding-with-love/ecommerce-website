@@ -24,17 +24,9 @@ export default function Footer() {
               Elegance in modesty. Handcrafted abayas and modest fashion for the modern woman.
             </p>
             <div className="flex space-x-4">
-              <Link href="https://instagram.com" className="text-white/70 hover:text-white transition-colors">
+              <Link href="https://instagram.com/modesthreads.co" className="text-white/70 hover:text-white transition-colors">
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
-              </Link>
-              <Link href="https://facebook.com" className="text-white/70 hover:text-white transition-colors">
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="https://twitter.com" className="text-white/70 hover:text-white transition-colors">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
               </Link>
             </div>
           </div>
@@ -68,9 +60,8 @@ export default function Footer() {
           <div className="space-y-6">
             <h3 className="text-sm uppercase tracking-wider font-medium">Contact</h3>
             <ul className="space-y-4">
-              <li className="text-white/70">WhatsApp: +91 7909149376</li>
-              <li className="text-white/70">Email: info@modestthreads.com</li>
-              <li className="text-white/70">Instagram: @reselling_abaya_esra</li>
+              <li className="text-white/70">Email: modesthreads.co@gmail.com</li>
+              <li className="text-white/70">Instagram: @modesthreads.co</li>
             </ul>
           </div>
         </div>
