@@ -35,7 +35,7 @@
     --olive-600: 60 6% 40%;
     --olive-700: 60 8% 30%;
     --olive-800: 60 10% 20%;
-    --olive-900: 60 12% 10%;
+    --olive-900: 90 25% 25%; /* Adjusted to match the logo background */
   }
 
   .dark {
@@ -81,5 +81,33 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
 }
 

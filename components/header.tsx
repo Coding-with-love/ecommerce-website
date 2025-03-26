@@ -11,7 +11,7 @@ import { CartButton } from "@/components/cart-button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { supabase } from "@/lib/supabase"
 import { isAdmin } from "@/lib/admin"
-import Logo from "@/public/logo.png"
+import Logo from "@/public/HEADER.png"
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -73,32 +73,35 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm",
-        scrolled || !isHomePage ? "py-2" : "py-4"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        scrolled || !isHomePage ? "bg-white/95 backdrop-blur-md shadow-sm py-2" : "bg-transparent py-4",
       )}
     >
       <div className="container flex items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center space-x-2 z-10">
-          <div className="relative h-10 w-10 overflow-hidden rounded-full bg-white">
-            <Image
-              src={Logo}
-              alt="Modest Threads Logo"
-              fill
-              className="object-contain p-0.5"
-              priority
-            />
+        <Link href="/" className="flex items-center z-10">
+          <div className="relative h-12 w-36">
+            {scrolled || !isHomePage ? (
+              <Image
+                src={Logo}
+                alt="Modest Threads Logo"
+                fill
+                className="object-contain rounded-xl"
+              />
+            ) : (
+              <div className="relative h-full w-full flex items-center">
+                <span className="font-serif text-xl text-white">Modest Threads</span>
+              </div>
+            )}
           </div>
-          <span className="font-serif text-xl text-black">
-            Modest Threads
-          </span>
         </Link>
 
         <nav className="hidden lg:flex lg:items-center lg:gap-8">
           <Link
             href="/"
             className={cn(
-              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary text-black",
-              pathname === "/" && "text-primary font-semibold"
+              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-grey",
+              scrolled || !isHomePage ? "text-black" : "text-white",
+              pathname === "/" && "text-white font-semibold",
             )}
           >
             Home
@@ -106,8 +109,9 @@ export default function Header() {
           <Link
             href="/collection"
             className={cn(
-              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary text-black",
-              pathname === "/collection" && "text-primary font-semibold"
+              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary",
+              scrolled || !isHomePage ? "text-black" : "text-white",
+              pathname === "/collection" && "text-white font-semibold",
             )}
           >
             Collection
@@ -115,8 +119,9 @@ export default function Header() {
           <Link
             href="/about"
             className={cn(
-              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary text-black",
-              pathname === "/about" && "text-primary font-semibold"
+              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary",
+              scrolled || !isHomePage ? "text-black" : "text-white",
+              pathname === "/about" && "text-white font-semibold",
             )}
           >
             About
@@ -124,8 +129,9 @@ export default function Header() {
           <Link
             href="/contact"
             className={cn(
-              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary text-black",
-              pathname === "/contact" && "text-primary font-semibold"
+              "text-sm uppercase tracking-wider font-medium transition-colors hover:text-primary",
+              scrolled || !isHomePage ? "text-black" : "text-white",
+              pathname === "/contact" && "text-white font-semibold",
             )}
           >
             Contact
@@ -133,14 +139,17 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <CartButton />
+        <div className={cn("transition-colors duration-300", scrolled || !isHomePage ? "text-black" : "text-white")}>
+            <CartButton />
+          </div>
 
+          {/* Account dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-black transition-colors duration-300"
+                className={cn("transition-colors duration-300", scrolled || !isHomePage ? "text-black" : "text-white")}
               >
                 <User className="h-5 w-5" />
                 <span className="sr-only">Account</span>
@@ -194,20 +203,13 @@ export default function Header() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <Button
-            asChild
-            variant="default"
-            size="sm"
-            className="rounded-none hidden sm:flex transition-all duration-300 ease-in-out bg-black text-white hover:bg-black/80"
-          >
-            <Link href="/contact">Contact Us</Link>
-          </Button>
-
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-black transition-colors duration-300"
+            className={cn(
+              "lg:hidden transition-colors duration-300",
+              scrolled || !isHomePage ? "text-black" : "text-white",
+            )}
             onClick={() => setMobileMenuOpen(true)}
           >
             <Menu className="h-6 w-6" />
@@ -216,7 +218,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile menu remains the same as it already has a white background */}
+      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 bg-white lg:hidden">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6">
@@ -241,7 +243,7 @@ export default function Header() {
               <li>
                 <Link
                   href="/"
-                  className={cn("text-2xl font-serif", pathname === "/" ? "text-primary font-medium" : "text-gray-800")}
+                  className={cn("text-2xl font-serif", pathname === "/" ? "text-white font-medium" : "text-primary")}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Home
@@ -252,7 +254,7 @@ export default function Header() {
                   href="/collection"
                   className={cn(
                     "text-2xl font-serif",
-                    pathname === "/collection" ? "text-primary font-medium" : "text-gray-800",
+                    pathname === "/collection" ? "text-white font-medium" : "text-gray-800",
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -264,7 +266,7 @@ export default function Header() {
                   href="/about"
                   className={cn(
                     "text-2xl font-serif",
-                    pathname === "/about" ? "text-primary font-medium" : "text-gray-800",
+                    pathname === "/about" ? "text-white font-medium" : "text-gray-800",
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -276,7 +278,7 @@ export default function Header() {
                   href="/contact"
                   className={cn(
                     "text-2xl font-serif",
-                    pathname === "/contact" ? "text-primary font-medium" : "text-gray-800",
+                    pathname === "/contact" ? "text-white font-medium" : "text-gray-800",
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -288,7 +290,7 @@ export default function Header() {
                   href="/account"
                   className={cn(
                     "text-2xl font-serif",
-                    pathname === "/account" ? "text-primary font-medium" : "text-gray-800",
+                    pathname === "/account" ? "text-white font-medium" : "text-gray-800",
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
