@@ -2,7 +2,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import FeaturedCollection from "@/components/featured-collection"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import ProductGallery from "@/components/product-gallery"
 import { getProducts } from "./actions/product-actions"
 
 export default async function Home() {
@@ -15,15 +17,16 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+
       {/* Hero Section */}
-      <section className="relative w-full min-h-screen flex items-center justify-center bg-[#3A432E] overflow-hidden">
+      <section className="relative w-full min-h-screen flex items-center justify-center bg-olive-900 overflow-hidden">
         {/* Background pattern and gradient */}
         <div className="absolute inset-0 z-0">
           {/* Subtle texture overlay */}
           <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzRjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00bTAtMTZjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00bTE2IDE2YzAtMi4yIDEuOC00IDQtNHM0IDEuOCA0IDQtMS44IDQtNCA0LTQtMS44LTQtNG0tMTYgMGMwLTIuMiAxLjgtNCA0LTRzNCAxLjggNCA0LTEuOCA0LTQgNC00LTEuOC00LTRtLTE2IDBjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00bTE2LTE2YzAtMi4yIDEuOC00IDQtNHM0IDEuOCA0IDQtMS44IDQtNCA0LTQtMS44LTQtNG0tMTYgMGMwLTIuMiAxLjgtNCA0LTRzNCAxLjggNCA0LTEuOCA0LTQgNC00LTEuOC00LTRtLTE2IDBjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00Ij48L3BhdGg+PC9nPjwvZz48L3N2Zz4=')]"></div>
 
           {/* Radial gradient for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#3A432E]/80 via-[#3A432E] to-[#3A432E]/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-olive-900/80 via-olive-900 to-olive-900/90"></div>
 
           {/* Subtle light effect */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[30vh] bg-white/5 blur-[100px] rounded-full"></div>
@@ -34,14 +37,8 @@ export default async function Home() {
           {/* Logo with decorative elements */}
           <div className="relative mb-16 md:mb-20">
             <div className="relative w-[320px] md:w-[480px] mx-auto">
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_5309-0ll5R09yIXszRFt7xpBC6UNoHSWqZi.png"
-                alt="Modest Threads Logo"
-                width={480}
-                height={160}
-                className="w-full h-auto"
-                priority
-              />
+              <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white tracking-tight">MODEST ELEGANCE</h1>
+              <p className="text-white/80 mt-4 text-lg md:text-xl font-light tracking-wide">TIMELESS MODEST FASHION</p>
             </div>
 
             {/* Decorative lines */}
@@ -52,15 +49,15 @@ export default async function Home() {
           {/* Hero content */}
           <div className="space-y-8 max-w-2xl mx-auto mb-32">
             <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-light tracking-wide">
-              Discover our exquisite collection of handcrafted abayas, where timeless tradition meets contemporary
-              design.
+              Discover our exquisite collection of handcrafted abayas and hijabs, where timeless tradition meets
+              contemporary design.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
               <Button
                 asChild
                 size="lg"
-                className="bg-white text-[#3A432E] hover:bg-white/90 rounded-none px-8 py-6 transition-all duration-300 ease-in-out text-base z-20"
+                className="bg-white text-olive-900 hover:bg-white/90 rounded-none px-8 py-6 transition-all duration-300 ease-in-out text-base z-20"
               >
                 <Link href="/collection" className="flex items-center gap-2">
                   Explore Collection
@@ -71,7 +68,7 @@ export default async function Home() {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-white text-[#3A432E] hover:bg-white/10 hover:text-white rounded-none px-8 py-6 transition-all duration-300 ease-in-out text-base z-20"
+                className="border-white text-white hover:bg-white/10 rounded-none px-8 py-6 transition-all duration-300 ease-in-out text-base z-20"
               >
                 <Link href="/contact">Contact Us</Link>
               </Button>
@@ -100,7 +97,75 @@ export default async function Home() {
 
       {/* Featured Collection Section */}
       <section id="featured" className="py-24 md:py-32 bg-white relative overflow-hidden">
-        <FeaturedCollection initialProducts={featuredProducts} />
+        <div className="container px-4 md:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-3xl md:text-5xl font-serif mb-6 tracking-tight">Featured Collections</h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Explore our most sought-after collections, each designed to combine timeless modesty with contemporary
+                  elegance.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                {featuredProducts.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="p-6 border-l-2 cursor-pointer transition-all border-olive-300 hover:border-olive-800 hover:bg-olive-50"
+                  >
+                    <h3 className="font-serif text-xl mb-2">{item.name}</h3>
+                    <p className="text-muted-foreground">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-none border-black text-black hover:bg-black hover:text-white group transition-all duration-300 ease-in-out"
+              >
+                <Link href="/collection">
+                  View All Collections
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="aspect-[4/5] relative overflow-hidden">
+                <Image
+                  src="/placeholder.svg?height=800&width=600"
+                  alt="Featured Collection"
+                  fill
+                  className="object-cover transition-opacity duration-500"
+                />
+              </div>
+              <div className="absolute -bottom-8 -left-8 w-2/3 h-16 bg-olive-200 -z-10"></div>
+              <div className="absolute -top-8 -right-8 w-16 h-2/3 bg-olive-100 -z-10"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals Section */}
+      <section className="py-24 md:py-32 bg-olive-50 relative overflow-hidden">
+        <div className="container px-4 md:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-serif mb-6 tracking-tight">New Arrivals</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover our latest designs, crafted with attention to detail and a commitment to quality.
+            </p>
+          </div>
+
+          <ProductGallery initialProducts={featuredProducts} />
+
+          <div className="mt-16 text-center">
+            <Button asChild className="rounded-none bg-olive-900 hover:bg-olive-800 text-white px-8 py-6">
+              <Link href="/collection">View All Products</Link>
+            </Button>
+          </div>
+        </div>
       </section>
 
       {/* Craftsmanship Section */}
@@ -111,7 +176,7 @@ export default async function Home() {
               <h2 className="text-3xl md:text-5xl font-serif mb-6 tracking-tight">Exquisite Craftsmanship</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p className="text-lg leading-relaxed">
-                  At Modest Threads, we believe that true luxury lies in the details. Each of our abayas is a testament
+                  At Modest Elegance, we believe that true luxury lies in the details. Each of our pieces is a testament
                   to the skill and dedication of our artisans.
                 </p>
                 <p className="text-lg leading-relaxed">
@@ -136,7 +201,7 @@ export default async function Home() {
             <div className="order-1 md:order-2 relative">
               <div className="aspect-square relative rounded-none overflow-hidden">
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_6437.JPG-V2FQd1AGJdxam1FzUpYwz4FPXcGyWW.jpeg"
+                  src="/placeholder.svg?height=600&width=600"
                   alt="Detailed abaya embroidery"
                   fill
                   className="object-cover"
@@ -147,6 +212,30 @@ export default async function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-24 md:py-32 bg-olive-900 text-white relative overflow-hidden">
+        <div className="container px-4 md:px-6 relative z-10">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-5xl font-serif mb-6 tracking-tight">Join Our Community</h2>
+            <p className="text-lg text-white/80 mb-8">
+              Subscribe to our newsletter for exclusive offers, new arrivals, and styling inspiration.
+            </p>
+            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+                required
+              />
+              <Button className="bg-white text-olive-900 hover:bg-white/90 rounded-none">Subscribe</Button>
+            </form>
+          </div>
+        </div>
+
+        {/* Background elements */}
+        <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzRjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00bTAtMTZjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00bTE2IDE2YzAtMi4yIDEuOC00IDQtNHM0IDEuOCA0IDQtMS44IDQtNCA0LTQtMS44LTQtNG0tMTYgMGMwLTIuMiAxLjgtNCA0LTRzNCAxLjggNCA0LTEuOCA0LTQgNC00LTEuOC00LTRtLTE2IDBjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00bTE2LTE2YzAtMi4yIDEuOC00IDQtNHM0IDEuOCA0IDQtMS44IDQtNCA0LTQtMS44LTQtNG0tMTYgMGMwLTIuMiAxLjgtNCA0LTRzNCAxLjggNCA0LTEuOCA0LTQgNC00LTEuOC00LTRtLTE2IDBjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00Ij48L3BhdGg+PC9nPjwvZz48L3N2Zz4=')]"></div>
       </section>
     </div>
   )

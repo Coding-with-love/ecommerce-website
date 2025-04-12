@@ -1,15 +1,17 @@
 import ProductGallery from "@/components/product-gallery"
 import FeaturedCollection from "@/components/featured-collection"
 import { getProducts } from "@/app/actions/product-actions"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
 
 export default async function CollectionPage() {
   const response = await getProducts()
   const products = response.success ? response.data : []
 
   return (
-    <div className="flex flex-col min-h-screen pt-20">
+    <div className="flex flex-col min-h-screen">
       {/* Collection Hero */}
-      <section className="relative py-20 md:py-28 bg-olive-50">
+      <section className="relative py-20 md:py-28 bg-olive-50 pt-32">
         <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-serif mb-6 tracking-tight">Our Collection</h1>

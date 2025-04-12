@@ -2,39 +2,35 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Currency, X } from "lucide-react"
-import Elegant from "@/public/elegance.png"
-import BlackPearl from "@/public/black-pearl.png"
-import SageGreen from "@/public/sage-green.png"
-import LuxuryBlack from "@/public/luxury-black.png"
-import DustyRose from "@/public/dusty-rose.png"
-import Signature from "@/public/signature.png"
+import { X, ShoppingBag } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/context/cart-context"
 import type { Product } from "@/lib/types"
-import { formatCurrency } from "@/lib/utils"
-import { ShoppingCart } from "lucide-react"
+
 export default function ProductGallery({ initialProducts = [] }: { initialProducts: Product[] }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [products] = useState<Product[]>(initialProducts)
   const { addToCart } = useCart()
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+
+  const formatCurrency = (price: number, currency: string) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency,
+    }).format(price)
+  }
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product)
+    setSelectedProduct(null)
+  }
 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {products.map((product, index) => (
-          <motion.div
-            key={product.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            viewport={{ once: true }}
-            className="group cursor-pointer"
-            onClick={() => setSelectedProduct(product)}
-          >
+        {products.map((product) => (
+          <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
             <div className="relative aspect-[3/4] overflow-hidden mb-4">
               <Image
                 src={product.image || "/placeholder.svg"}
@@ -47,12 +43,12 @@ export default function ProductGallery({ initialProducts = [] }: { initialProduc
             <div className="space-y-2">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">{product.category}</div>
               <div className="flex justify-between items-center">
-                <h3 className="font-serif text-xl group-hover:text-primary transition-colors">{product.name}</h3>
+                <h3 className="font-serif text-xl group-hover:text-olive-800 transition-colors">{product.name}</h3>
                 <span className="font-medium text-lg">{formatCurrency(product.price, product.currency)}</span>
               </div>
               <p className="text-muted-foreground line-clamp-2">{product.description}</p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -97,13 +93,10 @@ export default function ProductGallery({ initialProducts = [] }: { initialProduc
                   </p>
                   <div className="flex flex-col gap-2">
                     <Button
-                      className="w-full rounded-none transition-all duration-300 ease-in-out flex items-center justify-center gap-2"
-                      onClick={() => {
-                        addToCart(selectedProduct)
-                        setSelectedProduct(null)
-                      }}
+                      className="w-full rounded-none transition-all duration-300 ease-in-out flex items-center justify-center gap-2 bg-olive-900 hover:bg-olive-800"
+                      onClick={() => handleAddToCart(selectedProduct)}
                     >
-                      <ShoppingCart className="h-4 w-4" />
+                      <ShoppingBag className="h-4 w-4" />
                       Add to Cart
                     </Button>
                     <Button
@@ -115,13 +108,6 @@ export default function ProductGallery({ initialProducts = [] }: { initialProduc
                         Contact for Details
                       </Link>
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-none transition-all duration-300 ease-in-out"
-                      onClick={() => setSelectedProduct(null)}
-                    >
-                      Continue Browsing
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -132,3 +118,4 @@ export default function ProductGallery({ initialProducts = [] }: { initialProduc
     </>
   )
 }
+
