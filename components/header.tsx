@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useEffect } from "react"
-import { Menu, X, User, ShoppingBag, Search } from "lucide-react"
+import { Menu, X, User, ShoppingBag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
@@ -11,6 +12,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useCart } from "@/context/cart-context"
 import { supabase } from "@/lib/supabase"
 import { isAdmin } from "@/lib/admin"
+import { formatCurrency } from "@/lib/utils"
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -19,16 +21,22 @@ export default function Header() {
   const [isAdminUser, setIsAdminUser] = useState(false)
   const pathname = usePathname()
   const { items, removeFromCart, totalItems, subtotal, updateQuantity } = useCart()
+  const [isCartOpen, setIsCartOpen] = useState(false)
+
+  // Check if we're on the homepage
+  const isHomePage = pathname === "/"
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
     }
 
+    // Set initial scroll state
+    setScrolled(window.scrollY > 10)
+
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
-
 
   useEffect(() => {
     async function getUser() {
@@ -64,41 +72,34 @@ export default function Header() {
     getUser()
   }, [])
 
-  // Determine if we're on the homepage
-  const isHomePage = pathname === "/"
-
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     window.location.href = "/"
   }
 
-  const formatCurrency = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price)
-  }
+  // Determine header background and text colors
+  const headerStyle = isHomePage && !scrolled ? "bg-transparent text-white" : "bg-olive-900 text-white"
 
   return (
     <>
       {/* Main Header */}
       <header
-  className={cn(
-    "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-    scrolled ? "bg-white text-olive-900 shadow-md py-4" : "bg-transparent text-white py-6"
-  )}
->
-
+        className={cn(
+          "fixed top-0 left-0 w-full z-50 transition-all duration-300",
+          headerStyle,
+          scrolled ? "py-2 shadow-md" : "py-3",
+        )}
+      >
         <div className="container flex items-center justify-between px-4 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center z-10">
-            <div className="relative h-12 w-36">
-              <span className="font-serif text-xl text-white drop-shadow-md">MODEST ELEGANCE</span>
+            <div className="relative flex items-center justify-center h-10">
+              <span className="font-serif text-xl text-white drop-shadow-md whitespace-nowrap">MODEST THREADS</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex lg:items-center lg:gap-8">
+          <nav className="hidden lg:flex lg:items-center lg:gap-6">
             <Link
               href="/"
               className={cn(
@@ -145,9 +146,9 @@ export default function Header() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white drop-shadow-sm transition-colors duration-300"
+                  className="text-white drop-shadow-sm transition-colors duration-300 h-8 w-8 p-1.5"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4" />
                   <span className="sr-only">Account</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -198,103 +199,102 @@ export default function Header() {
             </DropdownMenu>
 
             {/* Cart */}
-            <Sheet>
+            <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white drop-shadow-sm transition-colors duration-300 relative"
+                  className="text-white drop-shadow-sm transition-colors duration-300 relative h-8 w-8 p-1.5"
                 >
-                  <ShoppingBag className="h-5 w-5" />
+                  <ShoppingBag className="h-4 w-4" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-olive-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-white text-olive-900 text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
                       {totalItems}
                     </span>
                   )}
                   <span className="sr-only">Cart</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-md">
+              <SheetContent className="w-full sm:max-w-md flex flex-col">
                 <SheetHeader>
-                  <SheetTitle>Your Cart</SheetTitle>
+                  <SheetTitle>Your Cart ({totalItems} items)</SheetTitle>
                 </SheetHeader>
-                <div className="mt-8">
-                  {items.length > 0 ? (
-                    <div className="space-y-4">
-                      {items.map((item) => (
-                        <div key={item.product.id} className="flex items-center gap-4 py-4 border-b">
-                          <div className="relative w-20 h-20 bg-muted">
-                            {item.product.image && (
-                              <img
-                                src={item.product.image || "/placeholder.svg"}
-                                alt={item.product.name}
-                                className="object-cover w-full h-full"
-                              />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-medium">{item.product.name}</h4>
-                            <div className="flex items-center mt-1">
-                              <button
-                                className="w-6 h-6 flex items-center justify-center border border-gray-300"
-                                onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
-                              >
-                                -
-                              </button>
-                              <span className="w-8 text-center">{item.quantity}</span>
-                              <button
-                                className="w-6 h-6 flex items-center justify-center border border-gray-300"
-                                onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-medium">{formatCurrency(item.product.price * item.quantity)}</p>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeFromCart(item.product.id)}
-                              className="text-muted-foreground mt-1"
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="pt-4 border-t">
-                        <div className="flex justify-between py-2">
-                          <span>Subtotal</span>
-                          <span className="font-medium">{formatCurrency(subtotal)}</span>
-                        </div>
-                        <div className="flex justify-between py-2">
-                          <span>Shipping</span>
-                          <span>Calculated at checkout</span>
-                        </div>
-                        <div className="flex justify-between py-2 font-medium">
-                          <span>Total</span>
-                          <span>{formatCurrency(subtotal)}</span>
-                        </div>
-                        <Button className="w-full mt-6 rounded-none bg-olive-900 hover:bg-olive-800">Checkout</Button>
-                        <Button variant="outline" className="w-full mt-2 rounded-none">
-                          View Cart
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
-                      <h3 className="mt-4 text-lg font-medium">Your cart is empty</h3>
-                      <p className="mt-2 text-sm text-muted-foreground">
+
+                <div className="flex-1 overflow-auto py-4">
+                  {items.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                      <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
+                      <h3 className="font-medium text-lg mb-1">Your cart is empty</h3>
+                      <p className="text-muted-foreground mb-4">
                         Looks like you haven't added anything to your cart yet.
                       </p>
-                      <Button asChild className="mt-8 rounded-none bg-olive-900 hover:bg-olive-800">
-                        <Link href="/collection">Continue Shopping</Link>
+                      <Button asChild onClick={() => setIsCartOpen(false)}>
+                        <Link href="/collection">Browse Collection</Link>
                       </Button>
                     </div>
+                  ) : (
+                    <ul className="space-y-4">
+                      {items.map((item) => (
+                        <li key={item.product.id} className="flex gap-4 py-4 border-b">
+                          <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden">
+                            <Image
+                              src={item.product.image || "/placeholder.svg"}
+                              alt={item.product.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 flex flex-col">
+                            <div className="flex justify-between">
+                              <h4 className="font-medium">{item.product.name}</h4>
+                              <button
+                                onClick={() => removeFromCart(item.product.id)}
+                                className="text-sm text-muted-foreground hover:text-foreground"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{item.product.category}</p>
+                            <div className="flex justify-between items-center mt-auto">
+                              <div className="flex items-center border">
+                                <button
+                                  className="px-2 py-1 border-r"
+                                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                                  disabled={item.quantity <= 1}
+                                >
+                                  -
+                                </button>
+                                <span className="px-3 py-1">{item.quantity}</span>
+                                <button
+                                  className="px-2 py-1 border-l"
+                                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <span className="font-medium">
+                                {formatCurrency(item.product.price * item.quantity, item.product.currency || "USD")}
+                              </span>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
+
+                {items.length > 0 && (
+                  <div className="border-t pt-4 space-y-4">
+                    <div className="flex justify-between font-medium text-lg">
+                      <span>Subtotal</span>
+                      <span>{formatCurrency(subtotal, "USD")}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Shipping and taxes calculated at checkout</p>
+                    <Button asChild className="w-full" onClick={() => setIsCartOpen(false)}>
+                      <Link href="/checkout">Proceed to Checkout</Link>
+                    </Button>
+                  </div>
+                )}
               </SheetContent>
             </Sheet>
 
@@ -302,21 +302,21 @@ export default function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-white drop-shadow-sm transition-colors duration-300"
+              className="lg:hidden text-white drop-shadow-sm transition-colors duration-300 h-8 w-8"
               onClick={() => setMobileMenuOpen(true)}
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
               <span className="sr-only">Open menu</span>
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - keep the rest of the mobile menu code the same */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 bg-white lg:hidden">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-            <span className="font-serif text-lg">MODEST ELEGANCE</span>
+            <span className="font-serif text-lg flex items-center whitespace-nowrap">MODEST THREADS</span>
             <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
               <X className="h-6 w-6" />
               <span className="sr-only">Close menu</span>
@@ -350,30 +350,6 @@ export default function Header() {
               </li>
               <li>
                 <Link
-                  href="/abayas"
-                  className={cn(
-                    "text-xl font-serif",
-                    pathname === "/abayas" ? "text-olive-800 font-medium" : "text-gray-800",
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Abayas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/hijabs"
-                  className={cn(
-                    "text-xl font-serif",
-                    pathname === "/hijabs" ? "text-olive-800 font-medium" : "text-gray-800",
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Hijabs
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/about"
                   className={cn(
                     "text-xl font-serif",
@@ -397,22 +373,9 @@ export default function Header() {
                 </Link>
               </li>
             </ul>
-            <div className="mt-12 space-y-4">
-              <Button asChild className="w-full">
-                <Link href="/collection" onClick={() => setMobileMenuOpen(false)}>
-                  Shop Now
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/account" onClick={() => setMobileMenuOpen(false)}>
-                  My Account
-                </Link>
-              </Button>
-            </div>
           </nav>
         </div>
       )}
     </>
   )
 }
-

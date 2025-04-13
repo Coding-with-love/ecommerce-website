@@ -3,6 +3,21 @@
 import { supabaseAdmin } from "@/lib/supabase-admin"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { supabase } from "@/lib/supabase"
+
+// Define color schema
+const colorSchema = z.object({
+  name: z.string(),
+  value: z.string(),
+})
+
+// Define attributes schema
+const attributesSchema = z
+  .object({
+    sizes: z.array(z.string()).optional(),
+    colors: z.array(colorSchema).optional(),
+  })
+  .optional()
 
 // Product schema for validation
 const productSchema = z.object({
@@ -11,18 +26,50 @@ const productSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters"),
   price: z.coerce.number().positive("Price must be positive"),
   image: z.string().url("Image must be a valid URL"),
+  images: z.array(z.string().url("Image URL must be valid")).optional().default([]),
   category: z.string().min(1, "Category is required"),
   currency: z.string().default("USD"),
   featured: z.boolean().default(false),
   in_stock: z.boolean().default(true),
+  stock_status: z.enum(["in_stock", "low_stock", "out_of_stock"]).default("in_stock"),
+  sku: z.string().optional(),
+  material: z.string().optional(),
+  care: z.string().optional(),
+  details: z.string().optional(),
+  attributes: attributesSchema,
 })
 
 export type ProductFormData = z.infer<typeof productSchema>
 
-// Get all products
-export async function getProducts() {
+// Get all products with optional filtering
+export async function getProducts(options?: {
+  category?: string
+  featured?: boolean
+  limit?: number
+  offset?: number
+}) {
   try {
-    const { data, error } = await supabaseAdmin.from("products").select("*").order("created_at", { ascending: false })
+    let query = supabaseAdmin.from("products").select("*")
+
+    // Apply filters if provided
+    if (options?.category) {
+      query = query.eq("category", options.category)
+    }
+
+    if (options?.featured !== undefined) {
+      query = query.eq("featured", options.featured)
+    }
+
+    // Apply pagination
+    if (options?.limit) {
+      query = query.limit(options.limit)
+    }
+
+    if (options?.offset) {
+      query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
+    }
+
+    const { data, error } = await query.order("created_at", { ascending: false })
 
     if (error) {
       console.error("Error fetching products:", error)
@@ -39,7 +86,15 @@ export async function getProducts() {
 // Get a single product by ID
 export async function getProductById(id: string) {
   try {
-    const { data, error } = await supabaseAdmin.from("products").select("*").eq("id", id).single()
+    // First try with admin client
+    let { data, error } = await supabaseAdmin.from("products").select("*").eq("id", id).single()
+
+    // If admin client fails or isn't available, fall back to regular client
+    if (error && supabase) {
+      const result = await supabase.from("products").select("*").eq("id", id).single()
+      data = result.data
+      error = result.error
+    }
 
     if (error) {
       console.error("Error fetching product:", error)
@@ -50,6 +105,43 @@ export async function getProductById(id: string) {
   } catch (error) {
     console.error("Unexpected error fetching product:", error)
     return { success: false, error: "An unexpected error occurred", data: null }
+  }
+}
+
+// Get related products (same category, excluding current product)
+export async function getRelatedProducts(currentProductId: string, category?: string) {
+  try {
+    // First try with admin client
+    let query = supabaseAdmin.from("products").select("*").neq("id", currentProductId).limit(4)
+
+    if (category) {
+      query = query.eq("category", category)
+    }
+
+    let { data, error } = await query
+
+    // If admin client fails or isn't available, fall back to regular client
+    if (error && supabase) {
+      let regularQuery = supabase.from("products").select("*").neq("id", currentProductId).limit(4)
+
+      if (category) {
+        regularQuery = regularQuery.eq("category", category)
+      }
+
+      const result = await regularQuery
+      data = result.data
+      error = result.error
+    }
+
+    if (error) {
+      console.error("Error fetching related products:", error)
+      return { success: false, error: "Failed to fetch related products", data: [] }
+    }
+
+    return { success: true, data: data || [] }
+  } catch (error) {
+    console.error("Unexpected error fetching related products:", error)
+    return { success: false, error: "An unexpected error occurred", data: [] }
   }
 }
 
@@ -105,6 +197,7 @@ export async function updateProduct(id: string, formData: ProductFormData) {
     revalidatePath("/admin/products")
     revalidatePath("/collection")
     revalidatePath(`/admin/products/${id}`)
+    revalidatePath(`/collection/${id}`)
     return { success: true, data }
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -138,4 +231,3 @@ export async function deleteProduct(id: string) {
     return { success: false, error: "An unexpected error occurred" }
   }
 }
-

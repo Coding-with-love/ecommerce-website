@@ -1,5 +1,4 @@
 import Image from "next/image"
-import TestimonialSection from "@/components/testimonial-section"
 import Logo from "@/public/logo.png"
 export default function AboutPage() {
   return (

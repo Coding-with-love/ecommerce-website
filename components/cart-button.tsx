@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/cart-context"
 import { formatCurrency } from "@/lib/utils"
@@ -45,16 +45,24 @@ export function CartButton() {
               {items.map((item) => (
                 <li key={item.product.id} className="flex gap-4 py-4 border-b">
                   <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={item.product.image || "/placeholder.svg"}
-                      alt={item.product.name}
-                      fill
-                      className="object-cover"
-                    />
+                    <Link href={`/collection/${item.product.id}`} onClick={() => setIsOpen(false)}>
+                      <Image
+                        src={item.product.image || "/placeholder.svg"}
+                        alt={item.product.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </Link>
                   </div>
                   <div className="flex-1 flex flex-col">
                     <div className="flex justify-between">
-                      <h4 className="font-medium">{item.product.name}</h4>
+                      <Link 
+                        href={`/collection/${item.product.id}`} 
+                        onClick={() => setIsOpen(false)}
+                        className="font-medium hover:text-primary transition-colors"
+                      >
+                        {item.product.name}
+                      </Link>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
                         className="text-sm text-muted-foreground hover:text-foreground"
@@ -69,6 +77,7 @@ export function CartButton() {
                           className="px-2 py-1 border-r"
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
+                          aria-label="Decrease quantity"
                         >
                           -
                         </button>
@@ -76,12 +85,13 @@ export function CartButton() {
                         <button
                           className="px-2 py-1 border-l"
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          aria-label="Increase quantity"
                         >
                           +
                         </button>
                       </div>
                       <span className="font-medium">
-                        {formatCurrency(item.product.price * item.quantity, item.product.currency)}
+                        {formatCurrency(item.product.price * item.quantity, item.product.currency || "USD")}
                       </span>
                     </div>
                   </div>
@@ -107,4 +117,3 @@ export function CartButton() {
     </Sheet>
   )
 }
-

@@ -3,39 +3,40 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { CheckCircle, XCircle, Clock, CreditCard, ChevronDown } from "lucide-react"
 import { updateOrderStatus } from "@/app/actions/admin-actions"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "@/components/ui/use-toast"
+import { CheckCircle, Clock, Package, XCircle, ChevronDown } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { ShippingInfoForm } from "./shipping-info-form"
 
-export function OrderStatusActions({ order }) {
-  const { toast } = useToast()
+interface OrderStatusActionsProps {
+  order: any
+}
+
+export function OrderStatusActions({ order }: OrderStatusActionsProps) {
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isShippingDialogOpen, setIsShippingDialogOpen] = useState(false)
 
-  const handleStatusUpdate = async (status: "pending" | "paid" | "fulfilled" | "cancelled") => {
+  const handleStatusUpdate = async (status: string) => {
     setIsUpdating(true)
-
     try {
       const result = await updateOrderStatus(order.id, status)
-
       if (result.success) {
         toast({
-          title: "Order updated",
-          description: `Order status changed to ${status}`,
+          title: "Order status updated",
+          description: `Order status has been updated to ${status}.`,
         })
-
-        // Refresh the page to show updated data
-        window.location.reload()
       } else {
         toast({
-          title: "Update failed",
-          description: result.error || "Failed to update order status",
+          title: "Error updating order status",
+          description: result.error || "An error occurred while updating order status.",
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Error updating order status",
+        description: "An unexpected error occurred.",
         variant: "destructive",
       })
     } finally {
@@ -44,47 +45,65 @@ export function OrderStatusActions({ order }) {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button disabled={isUpdating}>
-          {isUpdating ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
-          ) : null}
-          Update Status
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => handleStatusUpdate("pending")}
-          disabled={order.status === "pending"}
-          className="flex items-center gap-2"
-        >
-          <Clock className="h-4 w-4" /> Mark as Pending
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleStatusUpdate("paid")}
-          disabled={order.status === "paid"}
-          className="flex items-center gap-2"
-        >
-          <CreditCard className="h-4 w-4" /> Mark as Paid
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleStatusUpdate("fulfilled")}
-          disabled={order.status === "fulfilled"}
-          className="flex items-center gap-2"
-        >
-          <CheckCircle className="h-4 w-4" /> Mark as Fulfilled
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleStatusUpdate("cancelled")}
-          disabled={order.status === "cancelled"}
-          className="flex items-center gap-2"
-        >
-          <XCircle className="h-4 w-4" /> Mark as Cancelled
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex items-center gap-2">
+      <Dialog open={isShippingDialogOpen} onOpenChange={setIsShippingDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">
+            <Package className="mr-2 h-4 w-4" />
+            {order.shipping_info?.tracking_number ? "Update Shipping" : "Add Shipping Info"}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Shipping Information</DialogTitle>
+          </DialogHeader>
+          <ShippingInfoForm
+            orderId={order.id}
+            existingInfo={order.shipping_info}
+            onSuccess={() => setIsShippingDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button disabled={isUpdating}>
+            {isUpdating ? (
+              "Updating..."
+            ) : (
+              <>
+                Change Status <ChevronDown className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {order.status !== "pending" && (
+            <DropdownMenuItem onClick={() => handleStatusUpdate("pending")}>
+              <Clock className="mr-2 h-4 w-4" />
+              Mark as Pending
+            </DropdownMenuItem>
+          )}
+          {order.status !== "paid" && (
+            <DropdownMenuItem onClick={() => handleStatusUpdate("paid")}>
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Mark as Paid
+            </DropdownMenuItem>
+          )}
+          {order.status !== "fulfilled" && (
+            <DropdownMenuItem onClick={() => handleStatusUpdate("fulfilled")}>
+              <Package className="mr-2 h-4 w-4" />
+              Mark as Fulfilled
+            </DropdownMenuItem>
+          )}
+          {order.status !== "cancelled" && (
+            <DropdownMenuItem onClick={() => handleStatusUpdate("cancelled")}>
+              <XCircle className="mr-2 h-4 w-4" />
+              Mark as Cancelled
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   )
 }
-

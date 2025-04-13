@@ -131,7 +131,7 @@ export default function AdminSidebar() {
                 {!isCollapsed && <span>Products</span>}
               </Link>
             </li>
-            <li>
+            {/*<li>
               <Link
                 href="/admin/customers"
                 className={cn(
@@ -144,21 +144,7 @@ export default function AdminSidebar() {
                 <Users size={18} />
                 {!isCollapsed && <span>Customers</span>}
               </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/settings"
-                className={cn(
-                  "flex items-center gap-3 px-4 py-2 rounded-md hover:bg-gray-100",
-                  isActive("/admin/settings") && "bg-gray-100 font-medium",
-                  isCollapsed && "justify-center px-2",
-                )}
-                onClick={closeMobileMenu}
-              >
-                <Settings size={18} />
-                {!isCollapsed && <span>Settings</span>}
-              </Link>
-            </li>
+            </li>*/}
           </ul>
         </nav>
 

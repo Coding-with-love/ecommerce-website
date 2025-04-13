@@ -4,9 +4,8 @@ import { Playfair_Display, Montserrat } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { ThemeProvider } from "@/components/theme-provider"
 import { CartProvider } from "@/context/cart-context"
-
+import { WishlistProvider } from "@/context/wishlist-context"
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
@@ -30,15 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${playfair.variable} ${montserrat.variable} font-sans`}>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <CartProvider>
+ <CartProvider>
+  <WishlistProvider>
             <div className="relative flex min-h-screen flex-col">
               <Header />
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
+            </WishlistProvider>
           </CartProvider>
-        </ThemeProvider>
       </body>
     </html>
   )

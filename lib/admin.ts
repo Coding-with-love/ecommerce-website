@@ -60,29 +60,38 @@ export async function getAdminStats() {
     }
   }
 }
-
-export async function isAdmin() {
+export async function isAdmin(): Promise<boolean> {
   try {
-    const {
-      data: { session },
-    } = await supabaseAdmin.auth.getSession()
+    // Get the current session
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
 
-    if (!session?.user) {
+    if (sessionError || !sessionData.session) {
       return false
     }
 
-    // Check if the user has the 'admin' role in their metadata
-    if (session.user.user_metadata?.role === "admin") {
-      return true
-    }
+    // Check if the user has the admin role in their metadata
+    const userRole = sessionData.session.user?.user_metadata?.role
 
-    // Check if the user exists in the admins table
-    const { data: adminData } = await supabaseAdmin.from("admins").select("*").eq("user_id", session.user.id).single()
-
-    return !!adminData
+    return userRole === "admin"
   } catch (error) {
     console.error("Error checking admin status:", error)
     return false
   }
 }
+// Function to set admin role for a user (to be used by a superadmin)
+export async function setAdminRole(userId: string, isAdmin = true) {
+  try {
+    const { data, error } = await supabase.auth.admin.updateUserById(userId, {
+      user_metadata: { role: isAdmin ? "admin" : "user" },
+    })
 
+    if (error) {
+      throw error
+    }
+
+    return { success: true, data }
+  } catch (error) {
+    console.error("Error setting admin role:", error)
+    return { success: false, error }
+  }
+}

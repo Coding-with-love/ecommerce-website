@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft, Package } from "lucide-react"
 import { OrderStatusActions } from "@/components/admin/order-status-actions"
+import { ShippingInfoDisplay } from "@/components/admin/shipping-info-display"
+import { ShippingInfoForm } from "@/components/admin/shipping-info-form"
+import { EnvironmentError } from "@/components/admin/environment-error"
 
 export default async function OrderDetailsPage({
   params,
@@ -13,12 +16,22 @@ export default async function OrderDetailsPage({
   params: { id: string }
 }) {
   // Get the ID parameter
-  const id = await params.id
+  const id = params.id
+
+  // Check if environment variables are set
+  const hasEnvVars = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!hasEnvVars) {
+    return <EnvironmentError />
+  }
 
   // Get order details
   const response = await getOrderDetails(id)
 
   if (!response.success || !response.data) {
+    if (response.error?.includes("not properly initialized")) {
+      return <EnvironmentError />
+    }
     notFound()
   }
 
@@ -112,73 +125,84 @@ export default async function OrderDetailsPage({
         </Card>
 
         {/* Customer Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Customer Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Customer Name</h3>
-                <p>{customer?.name || "N/A"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-                <p>{customer?.email || "N/A"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Phone</h3>
-                <p>{customer?.phone || "N/A"}</p>
-              </div>
-
-              {order.shipping_address && (
-                <div className="pt-4 border-t">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Shipping Address</h3>
-                  <div className="text-sm">
-                    {order.shipping_address.name}
-                    <br />
-                    {order.shipping_address.address?.line1}
-                    <br />
-                    {order.shipping_address.address?.line2 && (
-                      <>
-                        {order.shipping_address.address.line2}
-                        <br />
-                      </>
-                    )}
-                    {order.shipping_address.address?.city}, {order.shipping_address.address?.state}{" "}
-                    {order.shipping_address.address?.postal_code}
-                    <br />
-                    {order.shipping_address.address?.country}
-                  </div>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Customer Name</h3>
+                  <p>{customer?.name || "N/A"}</p>
                 </div>
-              )}
-
-              {order.billing_address && (
-                <div className="pt-4 border-t">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Billing Address</h3>
-                  <div className="text-sm">
-                    {order.billing_address.name}
-                    <br />
-                    {order.billing_address.address?.line1}
-                    <br />
-                    {order.billing_address.address?.line2 && (
-                      <>
-                        {order.billing_address.address.line2}
-                        <br />
-                      </>
-                    )}
-                    {order.billing_address.address?.city}, {order.billing_address.address?.state}{" "}
-                    {order.billing_address.address?.postal_code}
-                    <br />
-                    {order.billing_address.address?.country}
-                  </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
+                  <p>{customer?.email || "N/A"}</p>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Phone</h3>
+                  <p>{customer?.phone || "N/A"}</p>
+                </div>
+
+                {order.shipping_address && (
+                  <div className="pt-4 border-t">
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Shipping Address</h3>
+                    <div className="text-sm">
+                      {order.shipping_address.name}
+                      <br />
+                      {order.shipping_address.address?.line1}
+                      <br />
+                      {order.shipping_address.address?.line2 && (
+                        <>
+                          {order.shipping_address.address.line2}
+                          <br />
+                        </>
+                      )}
+                      {order.shipping_address.address?.city}, {order.shipping_address.address?.state}{" "}
+                      {order.shipping_address.address?.postal_code}
+                      <br />
+                      {order.shipping_address.address?.country}
+                    </div>
+                  </div>
+                )}
+
+                {order.billing_address && (
+                  <div className="pt-4 border-t">
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Billing Address</h3>
+                    <div className="text-sm">
+                      {order.billing_address.name}
+                      <br />
+                      {order.billing_address.address?.line1}
+                      <br />
+                      {order.billing_address.address?.line2 && (
+                        <>
+                          {order.billing_address.address.line2}
+                          <br />
+                        </>
+                      )}
+                      {order.billing_address.address?.city}, {order.billing_address.address?.state}{" "}
+                      {order.billing_address.address?.postal_code}
+                      <br />
+                      {order.billing_address.address?.country}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Shipping Information */}
+          {order.shipping_info?.tracking_number ? (
+            <ShippingInfoDisplay
+              shippingInfo={order.shipping_info}
+              orderId={order.id} // Pass orderId instead of onEdit
+            />
+          ) : (
+            <ShippingInfoForm orderId={order.id} />
+          )}
+        </div>
       </div>
     </div>
   )
 }
-
